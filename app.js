@@ -212,9 +212,19 @@ client.once('ready', () => {
     return;
   }
 
-  setInterval(() => {
+  const now = new Date();
+  const midnight = new Date();
+  midnight.setHours(24, 0, 0, 0);
+
+  const timeUntilMidnight = midnight - now;
+
+  setTimeout(() => {
     updatePlayerStats(channel);
-  }, (5000)); // 3600000 * 24 = 24h
+    setInterval(() => {
+      updatePlayerStats(channel);
+    }, 24 * 60 * 60 * 1000);
+  }, timeUntilMidnight);
+  
 });
 
 client.login(process.env.token);
