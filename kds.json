@@ -1,0 +1,39 @@
+{
+  "players": {
+    "ChocoFr3sh": {
+      "games": 59,
+      "kills": 330,
+      "deaths": 181
+    },
+    "WMN.xIgnatz": {
+      "games": 121,
+      "kills": 778,
+      "deaths": 489
+    },
+    "MoslemBasher": {
+      "games": 55,
+      "kills": 261,
+      "deaths": 217
+    },
+    "WMN.Schiol": {
+      "games": 111,
+      "kills": 383,
+      "deaths": 515
+    },
+    "linus_hologram": {
+      "games": 31,
+      "kills": 125,
+      "deaths": 151
+    },
+    "LuchsderSpieler": {
+      "games": 71,
+      "kills": 235,
+      "deaths": 305
+    },
+    "WMN.yoda_gaming": {
+      "games": 72,
+      "kills": 197,
+      "deaths": 299
+    }
+  }
+}
