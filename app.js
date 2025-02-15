@@ -214,7 +214,7 @@ client.once('ready', () => {
 
   const now = new Date();
   const midnight = new Date();
-  midnight.setHours(24, 0, 0, 0);
+  midnight.setHours(24 - 1, 0, 0, 0); // Adjust for UTC+1 (Vienna)
 
   const timeUntilMidnight = midnight - now;
 
