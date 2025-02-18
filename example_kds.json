@@ -1,0 +1,39 @@
+{
+    "players": {
+        "Player1": {
+            "games": 0,
+            "kills": 0,
+            "deaths": 0
+        },
+        "Player2": {
+            "games": 0,
+            "kills": 0,
+            "deaths": 0
+        },
+        "Player3": {
+            "games": 0,
+            "kills": 0,
+            "deaths": 0
+        },
+        "Player4": {
+            "games": 0,
+            "kills": 0,
+            "deaths": 0
+        },
+        "Player5": {
+            "games": 0,
+            "kills": 0,
+            "deaths": 0
+        },
+        "Player6": {
+            "games": 0,
+            "kills": 0,
+            "deaths": 0
+        },
+        "Player7": {
+            "games": 0,
+            "kills": 0,
+            "deaths": 0
+        }
+    }
+}

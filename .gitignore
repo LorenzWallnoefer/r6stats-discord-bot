@@ -1,3 +1,5 @@
 node_modules
 .env.local
 Auth.json
+.DS_Store
+kds.json
