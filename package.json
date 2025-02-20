@@ -10,7 +10,7 @@
     },
     "scripts": {
         "start": "node app.js",
-        "dev": "nodemon app.js"
+        "dev": "nodemon app.ts"
     },
     "license": "MIT",
     "dependencies": {
@@ -21,6 +21,10 @@
         "r6statapi": "^2.2.0"
     },
     "devDependencies": {
-        "nodemon": "^3.0.0"
+        "@types/express": "^5.0.0",
+        "nodemo": "^1.0.0",
+        "nodemon": "^3.0.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.3"
     }
 }
