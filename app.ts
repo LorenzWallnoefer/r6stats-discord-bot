@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import express from 'express';
+import express, { Request, Response } from 'express';
 import {
   ButtonStyleTypes,
   InteractionResponseFlags,
@@ -9,7 +9,7 @@ import {
   verifyKeyMiddleware
 } from 'discord-interactions';
 
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Channel, Client, GatewayIntentBits } from 'discord.js';
 
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -26,13 +26,21 @@ const client = new Client({
 });
 
 import { R6StatAPI } from 'r6statapi';
+import { PlayerData } from "./models/playerdata";
 const api = new R6StatAPI();
 
 const email = process.env.UBI_MAIL
 const password = process.env.UBI_PWD
 const platform = "uplay"
 
-const token = await api.login(email, password)
+// check if email and password for r6-api are set
+if (email == undefined || password == undefined) {
+  console.error("UBI_MAIL or UBI_PWD environment not set!");
+  process.exit(-1);
+}
+
+// get access-token from api
+const token = await api.login(email, password);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,7 +57,7 @@ async function readPlayersFile() {
   }
 }
 
-async function writePlayersFile(playersData) {
+async function writePlayersFile(playersData: PlayerData) {
   try {
     await fs.writeFile(filePath, JSON.stringify(playersData, null, 2));
     console.log('Player data updated successfully');
@@ -58,7 +66,7 @@ async function writePlayersFile(playersData) {
   }
 }
 
-async function updatePlayerStats(channel) {
+async function updatePlayerStats(discordChannel: Channel) {
   const playersData = await readPlayersFile();
   if (!playersData) return;
 
@@ -77,11 +85,11 @@ async function updatePlayerStats(channel) {
       const user = await api.getUserByUsername(playerId, platform);
       const stats = await api.getUserRank(user.userId, platform);
 
-      let games = stats.ranked.abandons + stats.ranked.losses + stats.ranked.wins;
+      let games = stats.ranked!.abandons + stats.ranked!.losses + stats.ranked!.wins;
 
       const newGames = games;
-      const newKills = stats.ranked.kills;
-      const newDeaths = stats.ranked.deaths;
+      const newKills = stats.ranked!.kills;
+      const newDeaths = stats.ranked!.deaths;
 
       // let games = 1;
 
@@ -112,8 +120,8 @@ async function updatePlayerStats(channel) {
             kill_output = `:white_circle: **0 Kills/Deaths**`;
           }
           
-          let kd = parseInt(newKills) / parseInt(newDeaths);
-          kd = Math.round(parseFloat(kd) * 100) / 100;
+          let kd = newKills / newDeaths;
+          kd = Math.round(kd * 100) / 100;
 
           let emoji = "";
 
@@ -162,38 +170,38 @@ async function updatePlayerStats(channel) {
     let mm = today.getMonth() + 1;
     let dd = today.getDate();
 
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-
-    const formattedToday = dd + '.' + mm + '.' + yyyy;
+    const formattedToday = dd.toString().padStart(2, "0") + '.' + mm.toString().padStart(2, "0") + '.' + yyyy;
 
     // console.log(`# :sparkles: R6 Stats - ${formattedToday} :sparkles:\n\n\n` +
     //   outputString +
     //   `\n--------------------------------------------------------------------------------`);
-    
-    channel.send(
-      `# :sparkles: R6 Stats - ${formattedToday} :sparkles:\n\n\n` +
-      outputString +
-      `\n--------------------------------------------------------------------------------`
-    );
+    if(discordChannel.isSendable()) {
+      discordChannel.send(
+        `# :sparkles: R6 Stats - ${formattedToday} :sparkles:\n\n\n` +
+        outputString +
+        `\n--------------------------------------------------------------------------------`
+      );
+    }
   }
 }
 
 app.post(
   "/interactions",
-  verifyKeyMiddleware(process.env.PUBLIC_KEY),
-  async (req, res) => {
+  verifyKeyMiddleware(process.env.PUBLIC_KEY!),
+  (req: Request, res: Response) => {
     const interaction = req.body;
 
     if (interaction.type === InteractionType.PING) {
-      return res.json({ type: InteractionType.PING });
+      res.json({ type: InteractionType.PING });
+      return;
     }
 
     if (interaction.type === InteractionType.APPLICATION_COMMAND) {
       const { name } = interaction.data;
     }
 
-    return res.status(400).send("Unknown interaction");
+    res.status(400).send("Unknown interaction");
+    return;
   }
 );
 
@@ -205,6 +213,11 @@ client.once('ready', () => {
   console.log('Bot is online!');
   
   const channelId = process.env.CHANNEL_ID;
+  if(channelId == undefined) {
+    console.error("ChannelId environment not set!");
+    process.exit(-1);
+  }
+
   const channel = client.channels.cache.get(channelId);
 
   if (!channel) {
@@ -216,7 +229,7 @@ client.once('ready', () => {
   const midnight = new Date();
   midnight.setHours(24 - 1, 0, 0, 0); // Adjust for UTC+1 (Vienna)
 
-  const timeUntilMidnight = midnight - now;
+  const timeUntilMidnight = midnight.getTime() - now.getTime();
 
   setTimeout(() => {
     updatePlayerStats(channel);
