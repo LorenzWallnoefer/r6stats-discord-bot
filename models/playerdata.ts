@@ -1,3 +1,1 @@
-export interface PlayerData {
-    
-}
+export type PlayerData = any;
