@@ -1,18 +1,13 @@
 import * as dotenv from "dotenv";
 import express, { Request, Response } from 'express';
 import {
-  ButtonStyleTypes,
-  InteractionResponseFlags,
-  InteractionResponseType,
   InteractionType,
-  MessageComponentTypes,
   verifyKeyMiddleware
 } from 'discord-interactions';
 
 import { Channel, Client, GatewayIntentBits } from 'discord.js';
 
 import { promises as fs } from 'fs';
-import path from 'path';
 
 dotenv.config();
 dotenv.config({ path: `.env.local`, override: true });
