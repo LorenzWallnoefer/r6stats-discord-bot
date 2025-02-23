@@ -14,7 +14,7 @@ export class DiscordClientService {
             ],
         });
 
-        this.internalClient.once(Events.ClientReady, this.logOnReady);
+        this.internalClient.once(Events.ClientReady, () => this.logOnReady());
     }
 
     public async loginClient(discordToken: string): Promise<void> {
@@ -35,6 +35,7 @@ export class DiscordClientService {
     }
 
     private logOnReady(): void {
+        this.isReady = true;
         console.log("Discord-Bot is online!");
     }
 }

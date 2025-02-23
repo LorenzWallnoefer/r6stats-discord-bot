@@ -4,10 +4,10 @@ import {
     verifyKeyMiddleware
 } from 'discord-interactions';
 
-import { environmentConfig } from './config/environment';
-import { setupDiscordClient, setupR6API } from './utils/setupUtil';
-import { SavedDataService } from './services/savedDataService';
-import { CyclicStatUpdaterService } from './services/cyclicStatUpdaterService';
+import { environmentConfig } from './config/environment.js';
+import { setupDiscordClient, setupR6API } from './utils/setupUtil.js';
+import { SavedDataService } from './services/savedDataService.js';
+import { CyclicStatUpdaterService } from './services/cyclicStatUpdaterService.js';
 
 // init player-data-file
 SavedDataService.initPlayersFile();

@@ -1,5 +1,5 @@
 import { R6StatAPI } from "r6statapi";
-import { UserRank } from "r6statapi/dist/cjs/interfaces/stats";
+import { UserRank } from "r6statapi/dist/cjs/interfaces/stats.js";
 
 const platform = "uplay"
 

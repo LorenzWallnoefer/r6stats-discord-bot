@@ -1,7 +1,7 @@
-import { environmentConfig } from "../config/environment";
-import { DiscordClientService } from "./discordClientService";
-import { RainbowStatsService } from "./rainbowStatsService";
-import { SavedDataService } from "./savedDataService";
+import { environmentConfig } from "../config/environment.js";
+import { DiscordClientService } from "./discordClientService.js";
+import { RainbowStatsService } from "./rainbowStatsService.js";
+import { SavedDataService } from "./savedDataService.js";
 
 export class CyclicStatUpdaterService {
 

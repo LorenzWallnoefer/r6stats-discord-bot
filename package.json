@@ -3,14 +3,15 @@
     "private": true,
     "version": "1.0.0",
     "description": "Discord R6-Stats Bot",
-    "main": "app.js",
+    "main": "app.ts",
     "type": "module",
     "engines": {
         "node": ">=18.x"
     },
     "scripts": {
         "start": "node app.js",
-        "dev": "nodemon app.ts"
+        "dev": "nodemon app.ts",
+        "build-start": "tsc && cd dist && node app.js"
     },
     "license": "MIT",
     "dependencies": {

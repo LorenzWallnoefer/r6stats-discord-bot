@@ -1,6 +1,6 @@
-import { environmentConfig, EnvironmentConfig } from "../config/environment";
-import { DiscordClientService } from "../services/discordClientService";
-import { RainbowStatsService } from "../services/rainbowStatsService";
+import { environmentConfig } from "../config/environment.js";
+import { DiscordClientService } from "../services/discordClientService.js";
+import { RainbowStatsService } from "../services/rainbowStatsService.js";
 
 export async function setupR6API(): Promise<RainbowStatsService> {
     const {email, password } = checkForR6StatEnvironmentCredentials();
@@ -21,8 +21,16 @@ export async function setupDiscordClient(): Promise<DiscordClientService> {
     const serviceInstance = new DiscordClientService();
     await serviceInstance.loginClient(discordToken);
 
-    if(serviceInstance.isReady) {
-        return serviceInstance;
+    const maxTries = 10;
+    let currentTry = 0
+
+    while (++currentTry <= maxTries) {
+        if(serviceInstance.isReady) {
+            return serviceInstance;
+        }
+
+        console.log("Discord-Client not yet connected! Checking again...");
+        await sleep(1000);
     }
 
     throw new Error("Failed to log in to Discord-Bot-Client!");
@@ -44,4 +52,10 @@ function checkForDiscordBotCredentials(): string {
     } 
 
     return environmentConfig.token;
+}
+
+async function sleep(timeInMs: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        setTimeout(() => resolve(), timeInMs);
+    })
 }
