@@ -3,3 +3,5 @@ node_modules
 Auth.json
 .DS_Store
 kds.json
+dist/*
+Auth.json
