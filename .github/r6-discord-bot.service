@@ -1,0 +1,17 @@
+[Unit]
+Description=R6-Discord-Bot
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /data/r6-discord-bot/app.js
+Restart=always
+User=nobody
+Group=nogroup
+EnvironmentFile=/data/.env.local
+WorkingDirectory=/data/r6-discord-bot
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=R6-Discord-Bot
+
+[Install]
+WantedBy=multi-user.target

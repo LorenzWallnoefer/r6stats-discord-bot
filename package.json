@@ -11,7 +11,8 @@
     "scripts": {
         "start": "node app.js",
         "dev": "nodemon app.ts",
-        "build-start": "tsc && cd dist && node app.js"
+        "build-start": "tsc && cd dist && node app.js",
+        "build": "tsc"
     },
     "license": "MIT",
     "dependencies": {
@@ -24,7 +25,6 @@
     "devDependencies": {
         "@types/express": "^5.0.0",
         "@types/node": "^22.13.5",
-        "nodemo": "^1.0.0",
         "nodemon": "^3.0.0",
         "ts-node": "^10.9.2",
         "typescript": "^5.7.3"

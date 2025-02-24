@@ -1,0 +1,92 @@
+name: Build and Deploy R6-Discord-Bot
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run build
+
+      - name: Create package structure
+        run: |
+          mkdir -p r6-discord-bot-package/DEBIAN
+          mkdir -p r6-discord-bot-package/data/r6-discord-bot
+          mkdir -p r6-discord-bot-package/lib/systemd/system
+
+          # Copy application files
+          cp -r dist/* r6-discord-bot-package/data/r6-discord-bot/
+          cp -r node_modules r6-discord-bot-package/data/r6-discord-bot/
+          
+          # Copy systemd service file
+          cp .github/r6-discord-bot.service r6-discord-bot-package/lib/systemd/system/
+
+
+      - name: Create Debian control file
+        run: |
+          cat <<EOF > r6-discord-bot-package/DEBIAN/control
+          Package: R6-Discord-Bot
+          Version: 1.0.0
+          Section: web
+          Priority: optional
+          Architecture: amd64
+          Depends: nodejs
+          Maintainer: Ubikeks <ubikeks@gmail.com>
+          Description: R6-Bot that sends updates to a discord-channel
+          EOF
+
+      - name: Build .deb package
+        run: dpkg-deb --build r6-discord-bot-package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: r6-discord-bot-deb
+          path: r6-discord-bot-package.deb
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Download built package
+        uses: actions/download-artifact@v4
+        with:
+          name: r6-discord-bot-deb
+          path: .
+
+      - name: Deploy to Server via SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key && chmod 600 private_key
+          
+          # Copy package to server
+          scp -i private_key -o "StrictHostKeyChecking no" r6-discord-bot-package.deb $SERVER_USER@$SERVER_IP:/tmp/
+
+          # Install and start service
+          ssh -i private_key -o "StrictHostKeyChecking no" $SERVER_USER@$SERVER_IP << EOF
+            sudo dpkg -i /tmp/r6-discord-bot-package.deb
+            sudo systemctl daemon-reload
+            sudo systemctl enable r6-discord-bot
+            sudo systemctl restart r6-discord-bot
+            sudo chmod +777 /data/r6-discord-bot
+          EOF
+          
+          # Cleanup
+          rm -f private_key

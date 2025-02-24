@@ -130,14 +130,14 @@ export class CyclicStatUpdaterService {
     }
 
     private startInternalTimeout(): void {
-        this.runningTimeout = setTimeout(this.updateStats, this.getTimeoutTime());
+        this.runningTimeout = setTimeout(() => this.updateStats(), this.getTimeoutTime());
     }
 
     private getTimeoutTime(): number {
         // for now - calculate time until midnight
         const now = new Date();
         const midnight = new Date();
-        midnight.setHours(24 - 1, 0, 0, 0); // Adjust for UTC+1 (Vienna)
+        midnight.setHours(24, 0, 0, 0);
 
         return midnight.getTime() - now.getTime();
     }
